@@ -1,5 +1,6 @@
 package com.kinisoftware.simpletodo;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
@@ -75,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
                 itemsAdapter.notifyDataSetChanged();
                 writeItems();
                 return true;
+            }
+        });
+        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
+                Intent intentEditItemActivity = new Intent(MainActivity.this, EditItemActivity.class);
+                intentEditItemActivity.putExtra("itemPos", pos);
+                intentEditItemActivity.putExtra("itemBody", items.get(pos));
+                startActivity(intentEditItemActivity);
             }
         });
     }
