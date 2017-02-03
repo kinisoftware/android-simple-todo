@@ -9,6 +9,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import org.apache.commons.io.FileUtils;
 
@@ -19,6 +20,7 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final int REQUEST_CODE = 0;
     private List<String> items;
     private ListView lvItems;
     private ArrayAdapter<String> itemsAdapter;
@@ -42,6 +44,18 @@ public class MainActivity extends AppCompatActivity {
         itemsAdapter.add(newItem);
         etNewItem.setText("");
         writeItems();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+            String editedItemBody = data.getExtras().getString("editedItemBody");
+            int editedItemPos = data.getExtras().getInt("editedItemPos");
+            items.set(editedItemPos, editedItemBody);
+            itemsAdapter.notifyDataSetChanged();
+            writeItems();
+            Toast.makeText(this, "Item edited", Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void readItems() {
@@ -84,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intentEditItemActivity = new Intent(MainActivity.this, EditItemActivity.class);
                 intentEditItemActivity.putExtra("itemPos", pos);
                 intentEditItemActivity.putExtra("itemBody", items.get(pos));
-                startActivity(intentEditItemActivity);
+                startActivityForResult(intentEditItemActivity, REQUEST_CODE);
             }
         });
     }
