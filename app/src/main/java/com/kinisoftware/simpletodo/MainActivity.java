@@ -5,104 +5,92 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import com.kinisoftware.simpletodo.repository.model.Task;
-import com.raizlabs.android.dbflow.sql.language.Condition;
-import com.raizlabs.android.dbflow.sql.language.NameAlias;
 import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
 
     public static final int REQUEST_CODE = 0;
-    private List<String> items;
-    private ListView lvItems;
-    private ArrayAdapter<String> itemsAdapter;
+    private ArrayList<Task> tasks;
+    private ListView lvTasks;
+    private TaskAdapter taskAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        readItems();
-        lvItems = (ListView) findViewById(R.id.lvItems);
-        itemsAdapter = new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, items);
-        lvItems.setAdapter(itemsAdapter);
+        loadTasks();
+        lvTasks = (ListView) findViewById(R.id.lvTasks);
+        taskAdapter = new TaskAdapter(this, tasks);
+        lvTasks.setAdapter(taskAdapter);
 
         setupListViewListeners();
     }
 
     public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewItem);
+        EditText etNewItem = (EditText) findViewById(R.id.etNewTask);
         String newItem = etNewItem.getText().toString();
-        itemsAdapter.add(newItem);
-        saveItem(newItem);
+        saveTask(newItem);
         etNewItem.setText("");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
-            String editedItemBody = data.getExtras().getString("editedItemBody");
-            int editedItemPos = data.getExtras().getInt("editedItemPos");
-            items.set(editedItemPos, editedItemBody);
-            itemsAdapter.notifyDataSetChanged();
-            Toast.makeText(this, "Item edited", Toast.LENGTH_SHORT).show();
+            Task editedTask = (Task) data.getExtras().getSerializable("editedTask");
+            int editedTaskPos = data.getExtras().getInt("editedTaskPos");
+            /**
+             * TODO: It has to be a better way to do this
+             */
+            Task task = taskAdapter.getItem(editedTaskPos);
+            task.setName(editedTask.getName());
+
+            taskAdapter.notifyDataSetChanged();
+            Toast.makeText(this, "Task edited", Toast.LENGTH_SHORT).show();
         }
     }
 
-    private void readItems() {
-        List<Task> tasks = SQLite.select().from(Task.class).queryList();
-        items = new ArrayList<>();
-        for (int i = 0; i < tasks.size(); i++) {
-            Task task = tasks.get(i);
-            items.add(task.getName());
-        }
+    private void loadTasks() {
+        tasks = (ArrayList<Task>) SQLite.select().from(Task.class).queryList();
     }
 
     private void setupListViewListeners() {
-        lvItems.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+        lvTasks.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> adapterView, View view, int pos, long l) {
                 deleteTask(pos);
-                items.remove(pos);
-                itemsAdapter.notifyDataSetChanged();
                 return true;
             }
         });
-        lvItems.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Intent intentEditItemActivity = new Intent(MainActivity.this, EditItemActivity.class);
-                Task task = getTask(pos);
-                intentEditItemActivity.putExtra("taskPos", pos);
-                intentEditItemActivity.putExtra("task", task);
-                startActivityForResult(intentEditItemActivity, REQUEST_CODE);
+                Intent intentEditTaskActivity = new Intent(MainActivity.this, EditTaskActivity.class);
+                Task task = taskAdapter.getItem(pos);
+                intentEditTaskActivity.putExtra("taskPos", pos);
+                intentEditTaskActivity.putExtra("task", task);
+                startActivityForResult(intentEditTaskActivity, REQUEST_CODE);
             }
         });
     }
 
-    private void saveItem(String newItem) {
+    private void saveTask(String newItem) {
         Task task = new Task();
         task.setName(newItem);
         task.save();
+        taskAdapter.add(task);
     }
 
     private void deleteTask(int pos) {
-        Task task = getTask(pos);
+        Task task = taskAdapter.getItem(pos);
         task.delete();
-    }
-
-    private Task getTask(int pos) {
-        String item = items.get(pos);
-        Condition condition = Condition.column(NameAlias.builder("name").build());
-        condition.eq(item);
-        return SQLite.select().from(Task.class).where(condition).querySingle();
+        taskAdapter.remove(task);
     }
 }

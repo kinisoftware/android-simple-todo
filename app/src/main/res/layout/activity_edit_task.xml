@@ -8,14 +8,14 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
-    tools:context="com.kinisoftware.simpletodo.EditItemActivity">
+    tools:context="com.kinisoftware.simpletodo.EditTaskActivity">
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="textMultiLine"
         android:ems="10"
-        android:id="@+id/etEditItem"
+        android:id="@+id/etEditTask"
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
@@ -25,13 +25,13 @@
         android:text="Save"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btnSaveEditedItem"
-        android:layout_below="@+id/etEditItem"
+        android:id="@+id/btnSaveEditedTask"
+        android:layout_below="@+id/etEditTask"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
     <TextView
-        android:text="Edit Item Below:"
+        android:text="Edit Task Below:"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/textView"

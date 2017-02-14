@@ -10,41 +10,41 @@ import android.widget.TextView;
 
 import com.kinisoftware.simpletodo.repository.model.Task;
 
-public class EditItemActivity extends AppCompatActivity {
+public class EditTaskActivity extends AppCompatActivity {
 
-    private Button btnSaveEditedItem;
-    private EditText etEditItem;
-    private int itemPostToBeEdited;
+    private Button btnSaveEditedTask;
+    private EditText etEditTask;
+    private int taskPostToBeEdited;
     private Task taskEdited;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_edit_item);
-        btnSaveEditedItem = (Button) findViewById(R.id.btnSaveEditedItem);
-        etEditItem = (EditText) findViewById(R.id.etEditItem);
+        setContentView(R.layout.activity_edit_task);
+        btnSaveEditedTask = (Button) findViewById(R.id.btnSaveEditedTask);
+        etEditTask = (EditText) findViewById(R.id.etEditTask);
 
         setupButtonSaveEditedListeners();
-        showItemToBeEdited();
+        showTaskToBeEdited();
     }
 
-    private void showItemToBeEdited() {
+    private void showTaskToBeEdited() {
         taskEdited = (Task) getIntent().getSerializableExtra("task");
-        itemPostToBeEdited = getIntent().getIntExtra("taskPos", -1);
-        etEditItem.setText(taskEdited.getName(), TextView.BufferType.EDITABLE);
-        etEditItem.requestFocus();
+        taskPostToBeEdited = getIntent().getIntExtra("taskPos", -1);
+        etEditTask.setText(taskEdited.getName(), TextView.BufferType.EDITABLE);
+        etEditTask.requestFocus();
     }
 
     private void setupButtonSaveEditedListeners() {
-        btnSaveEditedItem.setOnClickListener(new View.OnClickListener() {
+        btnSaveEditedTask.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String editedTask = etEditItem.getText().toString();
+                String editedTask = etEditTask.getText().toString();
                 taskEdited.setName(editedTask);
                 taskEdited.update();
                 Intent intent = new Intent();
-                intent.putExtra("editedItemBody", editedTask);
-                intent.putExtra("editedItemPos", itemPostToBeEdited);
+                intent.putExtra("editedTask", taskEdited);
+                intent.putExtra("editedTaskPos", taskPostToBeEdited);
                 setResult(RESULT_OK, intent);
                 finish();
             }
