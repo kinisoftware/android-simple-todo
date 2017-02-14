@@ -4,7 +4,7 @@
 
 Submitted by: **Kini**
 
-Time spent: **6** hours spent in total
+Time spent: **8** hours spent in total
 
 ## User Stories
 
@@ -25,7 +25,7 @@ The following **optional** features are implemented:
 
 The following **additional** features are implemented:
 
-* [ ] List anything else that you can get done to improve the app functionality!
+* [x] Add floating action button for adding tasks
 
 ## Video Walkthrough
 
