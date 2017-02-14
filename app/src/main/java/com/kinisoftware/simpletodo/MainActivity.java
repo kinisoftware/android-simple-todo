@@ -5,7 +5,6 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -16,7 +15,8 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public static final int REQUEST_CODE = 0;
+    public static final int REQUEST_CODE_NEW_TASK = 0;
+    public static final int REQUEST_CODE_EDIT_TASK = 1;
     private ArrayList<Task> tasks;
     private ListView lvTasks;
     private TaskAdapter taskAdapter;
@@ -34,16 +34,19 @@ public class MainActivity extends AppCompatActivity {
         setupListViewListeners();
     }
 
-    public void onAddItem(View v) {
-        EditText etNewItem = (EditText) findViewById(R.id.etNewTask);
-        String newItem = etNewItem.getText().toString();
-        saveTask(newItem);
-        etNewItem.setText("");
+    public void onAddTask(View v) {
+        Intent intentAddTaskActivity = new Intent(MainActivity.this, AddTaskActivity.class);
+        startActivityForResult(intentAddTaskActivity, REQUEST_CODE_NEW_TASK);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE) {
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_NEW_TASK) {
+            Task newTask = (Task) data.getExtras().getSerializable("newTask");
+            taskAdapter.add(newTask);
+            Toast.makeText(this, "Task added", Toast.LENGTH_SHORT).show();
+        }
+        if (resultCode == RESULT_OK && requestCode == REQUEST_CODE_EDIT_TASK) {
             Task editedTask = (Task) data.getExtras().getSerializable("editedTask");
             int editedTaskPos = data.getExtras().getInt("editedTaskPos");
             /**
@@ -76,16 +79,9 @@ public class MainActivity extends AppCompatActivity {
                 Task task = taskAdapter.getItem(pos);
                 intentEditTaskActivity.putExtra("taskPos", pos);
                 intentEditTaskActivity.putExtra("task", task);
-                startActivityForResult(intentEditTaskActivity, REQUEST_CODE);
+                startActivityForResult(intentEditTaskActivity, REQUEST_CODE_EDIT_TASK);
             }
         });
-    }
-
-    private void saveTask(String newItem) {
-        Task task = new Task();
-        task.setName(newItem);
-        task.save();
-        taskAdapter.add(task);
     }
 
     private void deleteTask(int pos) {
