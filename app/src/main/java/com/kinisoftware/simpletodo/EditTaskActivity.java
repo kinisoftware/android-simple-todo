@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import com.kinisoftware.simpletodo.repository.model.Task;
 
+/**
+ * TODO: Edit due date
+ */
 public class EditTaskActivity extends AppCompatActivity {
 
     private Button btnSaveEditedTask;

@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.kinisoftware.simpletodo.repository.model.Task;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
 /**
@@ -30,7 +31,12 @@ public class TaskAdapter extends ArrayAdapter<Task> {
         }
 
         TextView taskName = (TextView) convertView.findViewById(R.id.taskName);
+        TextView taskDueDate = (TextView) convertView.findViewById(R.id.taskDueDate);
         taskName.setText(task.getName());
+        if (task.hasDueDate()) {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM");
+            taskDueDate.setText(dateFormat.format(task.getDueDate()));
+        }
         return convertView;
     }
 }
