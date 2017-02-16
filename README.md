@@ -4,7 +4,7 @@
 
 Submitted by: **Kini**
 
-Time spent: **10** hours spent in total
+Time spent: **11** hours spent in total
 
 ## User Stories
 
@@ -26,6 +26,7 @@ The following **optional** features are implemented:
 The following **additional** features are implemented:
 
 * [x] Add floating action button for adding tasks
+* [x] Customize action bar
 
 ## Video Walkthrough
 
