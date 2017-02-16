@@ -32,7 +32,6 @@ The following **additional** features are implemented:
 
 Here's a walkthrough of implemented user stories:
 
-(To be updated)
 ![walkthrough](SampleTodoWalktrough.gif)
 
 ## Notes
