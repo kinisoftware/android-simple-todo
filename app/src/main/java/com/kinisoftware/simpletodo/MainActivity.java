@@ -54,6 +54,9 @@ public class MainActivity extends AppCompatActivity {
              */
             Task task = taskAdapter.getItem(editedTaskPos);
             task.setName(editedTask.getName());
+            if (editedTask.hasDueDate()) {
+                task.setDueDate(editedTask.getDueDate());
+            }
 
             taskAdapter.notifyDataSetChanged();
             Toast.makeText(this, "Task edited", Toast.LENGTH_SHORT).show();

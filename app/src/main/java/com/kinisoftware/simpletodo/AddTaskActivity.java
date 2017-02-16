@@ -5,7 +5,7 @@ import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.DatePicker;
 import android.widget.EditText;
@@ -17,7 +17,7 @@ import java.util.Calendar;
 /**
  * TODO: Add feedback when select a due date
  */
-public class AddTaskActivity extends AppCompatActivity
+public class AddTaskActivity extends ActionBarCustomizeActivity
         implements DatePickerDialog.OnDateSetListener {
 
     private EditText etNewTask;
@@ -32,16 +32,6 @@ public class AddTaskActivity extends AppCompatActivity
         etNewTask = (EditText) findViewById(R.id.etNewTask);
     }
 
-    public void onSaveNewTask(View v) {
-        String taskName = etNewTask.getText().toString();
-        task.setName(taskName);
-        task.save();
-        Intent intent = new Intent();
-        intent.putExtra("newTask", task);
-        setResult(RESULT_OK, intent);
-        finish();
-    }
-
     public void showDatePickerDialog(View v) {
         DialogFragment datePickerFragment = new DatePickerFragment();
         datePickerFragment.show(getFragmentManager(), "datePicker");
@@ -52,6 +42,16 @@ public class AddTaskActivity extends AppCompatActivity
         Calendar calendar = Calendar.getInstance();
         calendar.set(year, month, dayOfMonth);
         task.setDueDate(calendar.getTime());
+    }
+
+    public void onSaveTask(MenuItem item) {
+        String taskName = etNewTask.getText().toString();
+        task.setName(taskName);
+        task.save();
+        Intent intent = new Intent();
+        intent.putExtra("newTask", task);
+        setResult(RESULT_OK, intent);
+        finish();
     }
 
     // TODO: Extract to a class
