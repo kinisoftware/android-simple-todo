@@ -2,6 +2,7 @@ package com.kinisoftware.simpletodo;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,7 +14,8 @@ import com.raizlabs.android.dbflow.sql.language.SQLite;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements EditTaskDialogFragment.EditTaskDialogListener {
 
     public static final int REQUEST_CODE_NEW_TASK = 0;
     public static final int REQUEST_CODE_EDIT_TASK = 1;
@@ -78,11 +80,15 @@ public class MainActivity extends AppCompatActivity {
         lvTasks.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int pos, long l) {
-                Intent intentEditTaskActivity = new Intent(MainActivity.this, EditTaskActivity.class);
+                FragmentManager fm = getSupportFragmentManager();
+                EditTaskDialogFragment editNameDialogFragment = EditTaskDialogFragment
+                        .build("Task edition");
                 Task task = taskAdapter.getItem(pos);
-                intentEditTaskActivity.putExtra("taskPos", pos);
-                intentEditTaskActivity.putExtra("task", task);
-                startActivityForResult(intentEditTaskActivity, REQUEST_CODE_EDIT_TASK);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable("task", task);
+                bundle.putInt("taskPos", pos);
+                editNameDialogFragment.setArguments(bundle);
+                editNameDialogFragment.show(fm, "fragment_edit_name");
             }
         });
     }
@@ -91,5 +97,20 @@ public class MainActivity extends AppCompatActivity {
         Task task = taskAdapter.getItem(pos);
         task.delete();
         taskAdapter.remove(task);
+    }
+
+    @Override
+    public void onFinishEditDialog(Task editedTask, int editedTaskPos) {
+        /**
+         * TODO: It has to be a better way to do this
+         */
+        Task task = taskAdapter.getItem(editedTaskPos);
+        task.setName(editedTask.getName());
+        if (editedTask.hasDueDate()) {
+            task.setDueDate(editedTask.getDueDate());
+        }
+
+        taskAdapter.notifyDataSetChanged();
+        Toast.makeText(this, "Task edited", Toast.LENGTH_SHORT).show();
     }
 }
